@@ -20,7 +20,8 @@ Imports:
     pheatmap,
     knitr,
     methods,
-    devtools
+    devtools,
+    coin
 Suggests:
 VignetteBuilder: knitr
 URL: https://github.com/Huang-lab/oppti

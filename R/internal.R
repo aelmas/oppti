@@ -73,17 +73,23 @@ gqplot = function(y, x, ci = 0.95, xlab = NULL, ylab = NULL, dist.sort = FALSE,
     if (is.null(ylab)) {ylab = expression('Variable1')}
     # find linear regression fit and compute distances to regression line
     if (is.null(omit.fit)) {
+        if (!any(x!=0)) {x[1] = 1e-10}
+        if (!any(y!=0)) {y[1] = 1e-10}
         fit = stats::lm(y ~ x)
         preds = predict(stats::lm(y ~ x, na.action = na.exclude),
             interval = 'confidence', level = ci)
     } else if (omit.fit < 1) {
+        if (!any(x!=0)) {x[1] = 1e-10}
+        if (!any(y!=0)) {y[1] = 1e-10}
         fit = stats::lm(y ~ x)
         preds = predict(stats::lm(y ~ x, na.action = na.exclude),
             interval = 'confidence', level = ci)
     } else {
         y.s = sort(y, decreasing = TRUE, index.return = TRUE, na.last = TRUE)
-        non.out = (y < y[y.s$ix[omit.fit]]) &
-            (y > y[y.s$ix[length(y[!is.na(y)])-omit.fit+1]])
+        non.out = (y <= y[y.s$ix[omit.fit]]) &
+            (y >= y[y.s$ix[length(y[!is.na(y)])-omit.fit+1]])
+        if (!any(x[non.out]!=0)) {x[non.out][1] = 1e-10}
+        if (!any(y[non.out]!=0)) {y[non.out][1] = 1e-10}
         fit = stats::lm(y[non.out] ~ x[non.out], na.action = na.exclude)
         preds = matrix(NA, length(y), 3)
         preds[non.out,] = predict(fit, interval = 'confidence', level = ci)
@@ -122,7 +128,7 @@ gqplot = function(y, x, ci = 0.95, xlab = NULL, ylab = NULL, dist.sort = FALSE,
                 slope = fit$coefficients[2], alpha = 0.5) +
             ggplot2::geom_line(ggplot2::aes(variable2, cupper), size = .1) +
             ggplot2::geom_line(ggplot2::aes(variable2, clower), size = .1) +
-            theme_bw() +
+            ggplot2::theme_bw() +
             ggplot2::xlim(minx,maxx) + ggplot2::ylim(miny,maxy) +
             ggplot2::ggtitle(paste(marker.name, 'in', cohort.name))
         if (!is.na(xlab)) {gg = gg + ggplot2::xlab(xlab)}
@@ -135,7 +141,7 @@ gqplot = function(y, x, ci = 0.95, xlab = NULL, ylab = NULL, dist.sort = FALSE,
                 slope = fit$coefficients[2], alpha = 0.5) +
             ggplot2::geom_line(ggplot2::aes(variable2, cupper), size = .1) +
             ggplot2::geom_line(ggplot2::aes(variable2, clower), size = .1) +
-            theme_bw() +
+            ggplot2::theme_bw() +
             ggplot2::xlim(minx,maxx) + ggplot2::ylim(miny,maxy) +
             ggplot2::ggtitle(paste(marker.name, 'in', cohort.name)) +
             ggplot2::geom_point(data = df[highlight,],
