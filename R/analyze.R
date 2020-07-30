@@ -658,11 +658,12 @@ oppti = function(data, mad.norm = FALSE, cohort.names = NULL, panel = 'global',
         dat.ids = colnames(pan.dat[[i]])
         imp.ids = colnames(pan.dat.imp[[i]])
         mar.sym.tes = data.frame(p = array(NA, nrow(pan.dat[[i]])), row.names = rownames(pan.dat[[i]]))
-        for (j in seq_len(nrow(pan.dat[[i]]))) {
+        for (j in which(rownames(pan.dat[[i]]) %in% pan.proc.markers[[i]])) {
             df = data.frame(ids = c(dat.ids, imp.ids),
                 exp = c(rep('observed', length(dat.ids)),
-                rep('imputed',  length(imp.ids))),
+                rep('imputed', length(imp.ids))),
                 val = as.numeric(c(pan.dat[[i]][j,], pan.dat.imp[[i]][j,])))
+            df = df[!df$ids %in% df$ids[is.na(df$val)],]
             mar.sym.tes$p[j] = coin::pvalue(coin::symmetry_test(val ~ exp,
                 data = df, alternative = 'two.sided', paired = T))
         }
@@ -783,7 +784,7 @@ oppti = function(data, mad.norm = FALSE, cohort.names = NULL, panel = 'global',
     } else {
         res = list(pan.dat.dys[[1]], pan.dat.imp[[1]], pan.dat.imp.test[[1]],
             pan.marker.out.exp.per[[1]], pan.dys.sig.thr.upp[[1]], pan.sym.tes[[1]])
+        for (i in seq_along(res)) {names(res[[i]]) = cohort.names}
     }
-    for (i in seq_along(cohort.names)) {names(res[[i]]) = cohort.names}
     return(res)
 }
