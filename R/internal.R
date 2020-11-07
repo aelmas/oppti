@@ -123,7 +123,7 @@ gqplot = function(y, x, ci = 0.95, xlab = NULL, ylab = NULL, dist.sort = FALSE,
     if (is.null(highlight)) {
         gg = ggplot2::ggplot(df, ggplot2::aes(x=variable2, y=variable1)) +
             ggplot2::geom_point(ggplot2::aes(variable2, variable1),
-                shape = 1, size = 3) +
+                shape = 1, size = 2) +
             ggplot2::geom_abline(intercept = fit$coefficients[1],
                 slope = fit$coefficients[2], alpha = 0.5) +
             ggplot2::geom_line(ggplot2::aes(variable2, cupper), size = .1) +
@@ -134,9 +134,9 @@ gqplot = function(y, x, ci = 0.95, xlab = NULL, ylab = NULL, dist.sort = FALSE,
         if (!is.na(xlab)) {gg = gg + ggplot2::xlab(xlab)}
         if (!is.na(ylab)) {gg = gg + ggplot2::ylab(ylab)}
     } else {
-        gg = ggplot2::ggplot(df, ggplot2::aes(x=variable2, y=variable1)) +
+        gg = ggplot2::ggplot(df[-which(rownames(df) %in% highlight),], ggplot2::aes(x=variable2, y=variable1)) +
             ggplot2::geom_point(ggplot2::aes(variable2, variable1),
-                shape = 1, size = 3) +
+                shape = 1, size = 2) +
             ggplot2::geom_abline(intercept = fit$coefficients[1],
                 slope = fit$coefficients[2], alpha = 0.5) +
             ggplot2::geom_line(ggplot2::aes(variable2, cupper), size = .1) +
@@ -145,7 +145,7 @@ gqplot = function(y, x, ci = 0.95, xlab = NULL, ylab = NULL, dist.sort = FALSE,
             ggplot2::xlim(minx,maxx) + ggplot2::ylim(miny,maxy) +
             ggplot2::ggtitle(paste(marker.name, 'in', cohort.name)) +
             ggplot2::geom_point(data = df[highlight,],
-            ggplot2::aes(x=variable2, y=variable1), colour = 'orange')
+            ggplot2::aes(x=variable2, y=variable1), colour = 'orange', shape = 19, size = 2)
         if (!is.na(xlab)) {gg = gg + ggplot2::xlab(xlab)}
         if (!is.na(ylab)) {gg = gg + ggplot2::ylab(ylab)}
     }
